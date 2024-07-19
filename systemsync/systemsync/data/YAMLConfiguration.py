@@ -9,4 +9,11 @@ from .YAMLObject import YAMLObject
 @dataclass
 class YAMLConfiguration:
     version: str
+    name: str
     projects: List[ProjectConfig] = field(default_factory=list)
+
+    def __repr__(self) -> str:
+        out = f"Configuration {self.name} (v {self.version})"
+        for p in self.projects:
+            out += f"\n{p}"
+        return out

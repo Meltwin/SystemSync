@@ -10,3 +10,9 @@ from .YAMLObject import YAMLObject
 class ProjectConfig:
     name: str
     tasks: List[ITask] = field(default_factory=list)
+
+    def __repr__(self) -> str:
+        out = f"+ Project {self.name}"
+        for t in self.tasks:
+            out += f"\n\t- {t}"
+        return out

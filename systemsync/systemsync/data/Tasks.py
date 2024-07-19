@@ -17,3 +17,12 @@ class GitTask(ITask):
     Task that will interact with a Git repository and sync it
     """
     repo: str
+
+
+@YAMLObject(tag="cmd")
+@dataclass
+class CmdTask(ITask):
+    """
+    Task that will only launch a bash command
+    """
+    cmd: str

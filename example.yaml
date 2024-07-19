@@ -1,8 +1,9 @@
 !Config
+  name: Dummy Configuration
   version: 1.0
   projects:
       - !Project
         name: DummyTask
         tasks:
             - !git
-                repo: https://github.com
+              repo: https://github.com
