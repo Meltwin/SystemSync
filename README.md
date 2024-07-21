@@ -5,3 +5,10 @@ devices through a list of tasks (as for a Docker). It will look into a distant e
 a description and refresh the device accordingly.
 
 This application will be essentially written in Python.
+
+## Dependencies
+
+|   Name   | Version | Link |
+|:--------:|:-------:|:-----|
+| Python 3 |  >=3.8  |      |
+|  PyYAML  |         |      |

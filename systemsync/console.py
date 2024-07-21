@@ -1,12 +1,13 @@
 from argparse import ArgumentParser
 from enum import Enum
 
-from systemsync.cli import dump_file
+from systemsync.cli import dump_file, run_configuration
 
 
 class AvailableCmds(Enum):
     UNKNOWN = "---"
     DUMP = "dump"
+    RUN = "run"
 
 
 def main():
@@ -17,6 +18,8 @@ def main():
     match AvailableCmds(args.cmd):
         case AvailableCmds.DUMP:
             dump_file(parser)
+        case AvailableCmds.RUN:
+            run_configuration(parser)
         case _:
             print("Unknown command")
 

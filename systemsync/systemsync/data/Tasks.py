@@ -17,6 +17,8 @@ class GitTask(ITask):
     Task that will interact with a Git repository and sync it
     """
     repo: str
+    dest: str
+    branch: str | None = None
 
 
 @YAMLObject(tag="cmd")

@@ -7,6 +7,3 @@ def dump_file(parser: ArgumentParser):
     args = parser.parse_args()
 
     print(load_configuration(args.file))
-
-
-
