@@ -7,6 +7,7 @@ class ITask:
     """
     Task interface
     """
+
     pass
 
 
@@ -16,9 +17,11 @@ class GitTask(ITask):
     """
     Task that will interact with a Git repository and sync it
     """
+
     repo: str
     dest: str
     branch: str | None = None
+    dirname: str | None = None
 
 
 @YAMLObject(tag="cmd")
@@ -27,4 +30,5 @@ class CmdTask(ITask):
     """
     Task that will only launch a bash command
     """
+
     cmd: str

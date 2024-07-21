@@ -1,7 +1,12 @@
+from typing import List
 from ..data import GitTask
 from .IAction import IAction
+from ..utils.logger import Logger, LogSource
 
 import os
+import subprocess as sp
+import re
+
 
 class GitAction(IAction[GitTask]):
     """
@@ -12,13 +17,112 @@ class GitAction(IAction[GitTask]):
         super().__init__(task)
 
     def run(self):
+        # Compute local directory name
+        if self._task.dirname is None:
+            default_dirname = self._get_repo_default_name()
+            if default_dirname is None:
+                Logger.error("Can't determine local repository folder name!")
+                return
+            self._task.dirname = default_dirname
+
         # Check if directory already exist, in this case update it
-        if os.path.exists(self._task.dest):
-            self._update_repo()
-        else:
+        if not os.path.exists(self._task.dest):
+            self._clone_repo()
+
+        # Check if git repository
+        if not self._is_repository():
+            return Logger.error("Folder already exist but isn't a repository!")
+
+        # Check branch
+        if (
+            self._task.branch is not None
+            and self._fetch_repo_branch() != self._task.branch
+        ):
+            self._switch_branch()
+
+        # Else, we can just update the repository
+        self._update_repo()
+
+    # =========================================================================
+
+    def _switch_branch(self):
+        """
+        Switch branch inside of the repository
+        """
+        Logger.info(LogSource.ACTION, "Switching git branch!")
+        self._reset_repo()
+        self.__run_cmd(["git", "checkout", {self._task.branch}])
 
     def _update_repo(self):
-        pass
+        """
+        Update the repository based from the task
+        """
+        Logger.info(LogSource.ACTION, "Updating repository!")
+
+        # Reset to default in case of modifications
+        self._reset_repo()
+
+        # Update it
+        self.__run_cmd(["git", "pull"])
 
     def _clone_repo(self):
-        pass
+        """
+        Clone a git repository according to the GitTask.
+        """
+        # Construct command
+        cmd = f"git {self._task.repo}"
+        if self._task.branch is not None:
+            cmd += f" -b {self._task.branch}"
+
+        # Run command
+        self.__run_cmd(cmd, False)
+
+    def _fetch_repo_branch(self) -> str:
+        """
+        Fetch the current branch
+
+        Returns:
+            str: the name of the branch where we are
+        """
+
+    def _reset_repo(self) -> None:
+        """
+        Reset the repository (if exist)
+        """
+        self.__run_cmd(["git", "reset", "--hard"])
+
+    # =========================================================================
+
+    def _is_repository(self) -> bool:
+        """
+        Check whether a directory is a git repository
+
+        Returns:
+            bool: True if the dir is a repository
+        """
+        git_dir = os.path.join(self._task.dest, ".git")
+        return os.path.exists(git_dir)
+
+    def _get_repo_default_name(self) -> str | None:
+        """
+        Get the default repository directory name based on the git url
+
+        Returns:
+            str: the dirname
+        """
+        match = re.search("\/([a-zA-Z0-9]*).git$", self._task.repo)
+        return match.start()
+
+    def __run_cmd(self, cmd: List[str], inside: bool = True) -> None:
+        """
+        Macro to run a command using the subprocess `call` function
+
+        Args:
+            cmd (List[str]): the command to run (as a list of arguments)
+        """
+        if inside:
+            wd = os.path.join(self._task.dest, self._task.dirname)
+        else:
+            wd = self._task.dest
+
+        return sp.call(cmd, shell=True, cwd=wd)
