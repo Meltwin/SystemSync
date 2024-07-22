@@ -6,4 +6,5 @@
         name: DummyTask
         tasks:
             - !git
-              repo: https://github.com
+              repo: "https://github.com/Meltwin/SystemSync.git"
+              dest: "~/Desktop"

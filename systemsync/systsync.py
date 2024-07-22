@@ -5,9 +5,16 @@ from systemsync.cli import dump_file, run_configuration
 
 
 class AvailableCmds(Enum):
-    UNKNOWN = ("---", None)
-    DUMP = ("dump", dump_file)
-    RUN = ("run", run_configuration)
+    UNKNOWN = "---"
+    DUMP = "dump"
+    RUN = "run"
+
+
+cmd_mapping = {
+    AvailableCmds.UNKNOWN: None,
+    AvailableCmds.DUMP: dump_file,
+    AvailableCmds.RUN: run_configuration,
+}
 
 
 def main():
@@ -16,7 +23,7 @@ def main():
         "cmd", choices=[m.value for m in AvailableCmds if m != AvailableCmds.UNKNOWN]
     )
     args = parser.parse_known_args()[0]
-    AvailableCmds(args.cmd).value[1](parser)
+    cmd_mapping[AvailableCmds(args.cmd)](parser)
 
 
 if __name__ == "__main__":

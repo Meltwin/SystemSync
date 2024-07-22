@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class LogSource(Enum):
-    MAIN = ""
-    ACTION = "\t"
+    MAIN = "[GLOBAL]"
+    ACTION = "[ACTION]"
 
 
 class LogPrefix(Enum):
