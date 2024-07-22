@@ -16,6 +16,9 @@ class IAction(Generic[T]):
         self._task = task
 
     def run(self):
+        """
+        Run the action based on the task configuration.
+        """
         if self._task.valid:
             self._run()
 

@@ -6,9 +6,11 @@ a description and refresh the device accordingly.
 
 This application will be essentially written in Python.
 
+This application is targeted to Linux distributions. It does not support Windows for now.
+
 ## Dependencies
 
-|   Name   | Version | Link |
-|:--------:|:-------:|:-----|
-| Python 3 |  >=3.8  |      |
-|  PyYAML  |         |      |
+|   Name   | Version | Link                                                 |
+| :------: | :-----: | :--------------------------------------------------- |
+| Python 3 |  >=3.8  | [Python Website](https://www.python.org/downloads/)  |
+|  PyYAML  | >=6.0.1 | [PyPI PyYAML Page](https://pypi.org/project/PyYAML/) |

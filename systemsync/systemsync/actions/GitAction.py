@@ -2,6 +2,7 @@ from typing import List, Tuple
 from ..data import GitTask
 from .IAction import IAction
 from ..utils.logger import Logger, LogSource
+from ..utils import execute_command
 
 import os
 import subprocess as sp
@@ -130,7 +131,4 @@ class GitAction(IAction[GitTask]):
         else:
             wd = self._task.dest
 
-        prog = sp.Popen(cmd, shell=True, cwd=wd, stdout=sp.PIPE, stderr=sp.PIPE)
-        prog.wait()
-        out, err = prog.communicate()
-        return (bytes.decode(out).strip(), bytes.decode(err).strip())
+        return execute_command(cmd, wd)
