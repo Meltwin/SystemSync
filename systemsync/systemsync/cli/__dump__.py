@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from ..utils.load import load_configuration
+from ..utils.config import load_configuration
 
 
 def dump_file(parser: ArgumentParser):

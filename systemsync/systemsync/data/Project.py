@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import Any, Dict, List
 
 from .Tasks import ITask
 from .YAMLObject import YAMLObject
@@ -10,6 +10,7 @@ from .YAMLObject import YAMLObject
 class ProjectConfig:
     name: str
     tasks: List[ITask] = field(default_factory=list)
+    vars: Dict[str, Any] = field(default_factory=dict)
 
     def __repr__(self) -> str:
         out = f"+ Project {self.name}"

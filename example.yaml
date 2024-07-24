@@ -4,7 +4,12 @@
   projects:
       - !Project
         name: DummyTask
+        vars:
+          branch: "master"
         tasks:
             - !git
               repo: "https://github.com/Meltwin/SystemSync.git"
               dest: "~/Desktop"
+              branch: "${branch}"
+              conditions:
+                - "True"

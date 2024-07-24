@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 from ..data import GitTask
 from .IAction import IAction
 from ..utils.logger import Logger, LogSource
@@ -14,15 +14,17 @@ class GitAction(IAction[GitTask]):
     This class takes a GitTask as input and manage it.
     """
 
-    def __int__(self, task: GitTask):
-        super().__init__(task)
+    def __int__(self, task: GitTask, vars: Dict[str, Any]):
+        super().__init__(task, vars)
 
     def _run(self):
         # Compute local directory name
         if self._task.dirname is None:
             default_dirname = self._get_repo_default_name()
             if default_dirname is None:
-                Logger.error("Can't determine local repository folder name!")
+                Logger.error(
+                    LogSource.ACTION, "Can't determine local repository folder name!"
+                )
                 return
             self._task.dirname = default_dirname
         self._task.dest = os.path.expanduser(self._task.dest)
@@ -52,9 +54,10 @@ class GitAction(IAction[GitTask]):
         """
         Switch branch inside of the repository
         """
+        assert self._task.branch is not None
         Logger.info(LogSource.ACTION, "Switching git branch!")
         self._reset_repo()
-        self.__run_cmd(" ".join(["git", "checkout", self._task.branch]))
+        self.__run_cmd(["git", "checkout", self._task.branch])
 
     def _update_repo(self):
         """
@@ -95,7 +98,7 @@ class GitAction(IAction[GitTask]):
         """
         Reset the repository (if exist)
         """
-        self.__run_cmd(" ".join(["git", "reset", "--hard"]))
+        self.__run_cmd(["git", "reset", "--hard"])
 
     # =========================================================================
 
@@ -106,6 +109,8 @@ class GitAction(IAction[GitTask]):
         Returns:
             bool: True if the dir is a repository
         """
+        assert self._task.dest is not None
+        assert self._task.dirname is not None
         git_dir = os.path.join(self._task.dest, self._task.dirname, ".git")
         return os.path.exists(git_dir)
 
@@ -119,7 +124,7 @@ class GitAction(IAction[GitTask]):
         match = re.findall("\/([a-zA-Z0-9]*).git$", self._task.repo)
         return match[0]
 
-    def __run_cmd(self, cmd: List[str], inside: bool = True) -> Tuple[str, str]:
+    def __run_cmd(self, cmd: List[str] | str, inside: bool = True) -> Tuple[str, str]:
         """
         Macro to run a command using the subprocess `call` function
 
@@ -127,6 +132,8 @@ class GitAction(IAction[GitTask]):
             cmd (List[str]): the command to run (as a list of arguments)
         """
         if inside:
+            assert self._task.dest is not None
+            assert self._task.dirname is not None
             wd = os.path.join(self._task.dest, self._task.dirname)
         else:
             wd = self._task.dest

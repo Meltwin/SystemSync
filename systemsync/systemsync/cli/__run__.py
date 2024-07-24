@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
-from ..utils.load import load_configuration
-from ..actions import IAction, ActionFactory
+from ..utils.config import load_configuration, compute_vars
+from ..actions import ActionFactory
 
 
 def run_configuration(parser: ArgumentParser):
@@ -11,8 +11,15 @@ def run_configuration(parser: ArgumentParser):
     print(f"Syncing configuration {config.name} v{config.version}")
     for p in config.projects:
         print(f"+ Running project {p.name} [{len(p.tasks)} tasks]")
-        for t in p.tasks:
-            print(f"\t- Running task {t}")
 
-            action = ActionFactory.action_from_task(t)
-            action.run()
+        vars = compute_vars(p)
+        for k, v in vars.items():
+            print(f"\t- Var {k} = '{v}' [{type(v).__name__}]")
+
+        for t in p.tasks:
+            action = ActionFactory.action_from_task(t, vars)
+            print(f"\t- Running task {action._task}...")
+            if action.run():
+                print("\t    Action finished!")
+            else:
+                print("\t    Aborted..")

@@ -6,7 +6,7 @@ a description and refresh the device accordingly.
 
 This application will be essentially written in Python.
 
-This application is targeted to Linux distributions. It does not support Windows for now.
+This application is targeted for Linux distributions. It does not support Windows for now.
 
 ## Dependencies
 
